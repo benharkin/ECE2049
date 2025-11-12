@@ -1,0 +1,25 @@
+#include <msp430.h>
+#include "timer.h"
+
+// This is static, so other source files will not be able to access it directly,
+// for encapsulation.
+static volatile long timer;
+
+void setupTimer(void){
+    //Timer A2 setup for interrupts every 5 ms
+    TA2CTL = TASSEL_1 | ID_0 | MC_1;
+    TA2CCR0 = 163;
+    TA2CCTL0 = CCIE;
+}
+
+// Returns the time in multiples of ~5ms
+long getTime(void){
+    return timer;
+}
+
+#pragma vector=TIMER2_A0_VECTOR
+__interrupt void TIMER_A2_ISR (void)
+{
+    timer++;
+}
+

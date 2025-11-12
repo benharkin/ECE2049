@@ -1,3 +1,4 @@
+#include <msp430.h>
 #include "buttons.h"
 void initButtons()
 {

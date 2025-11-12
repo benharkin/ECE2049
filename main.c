@@ -1,44 +1,17 @@
 #include <msp430.h>
 #include "peripherals.h"
 #include "buttons.h"
-
-#define A0 0x00
-#define B BIT0
-#define C BIT1
-#define D BIT1|BIT0
-#define E BIT2
-#define F BIT2|BIT0
-#define G BIT2|BIT1
-#define A1 BIT2|BIT1|BIT0
-
-
+#include "note.h"
+#include "timer.h"
 
 #define SONG_LENGTH 28
 
-void setupTimer(void){
-    //Timer A2 setup for interrupts every 5 ms
-    TA2CTL = TASSEL_1 | ID_0 | MC_1;
-    TACCR0 = 163;
-    TA2CCTL0 = CCIE;
-}
-
-void print_str(char *str, int32_t x, int32_t y)
-{
-    Graphics_clearDisplay(&g_sContext);
-    Graphics_drawStringCentered(&g_sContext, (uint8_t*) str, AUTO_STRING_LENGTH,
-                                x, y,
-                                TRANSPARENT_TEXT);
-    Graphics_flushBuffer(&g_sContext);
-}
+void print_str(char *str, int32_t x, int32_t y);
 
 typedef enum
 {
     NONE, IDLE, COUNTDOWN, PLAYING, GAME_OVER, WIN
 } state_t;
-
-
-volatile long timer;
-
 
 void main(void)
 {
@@ -63,7 +36,7 @@ void main(void)
     int current_note = 0;
 
     char key;
-    char prev_key;
+    char prevKey;
 
     char button;
     char prev_button;
@@ -73,7 +46,7 @@ void main(void)
     while (1){
 
         key = getKey();
-        button = getButton();
+        button = getButtons();
 
         switch (state){
         case IDLE:
@@ -84,7 +57,6 @@ void main(void)
                 prev_state = state;
             }
 
-//            wait_for_key_press('*');
             if (key != prevKey && key == '*')
             {
                 state = COUNTDOWN;
@@ -98,12 +70,12 @@ void main(void)
             //Loop through the song array
             //On each loop
 
-            if(timer<note_end){
+            if(getTime()<note_end){
                 //note is still playing
                 //check if button input matches the note
                 stored_input |= button;
             } else {
-                buzzerOff();
+                BuzzerOff();
                 setLeds(0);
 
                 if(stored_input != song[current_note] & (BIT0|BIT1|BIT2|BIT3)){
@@ -118,9 +90,9 @@ void main(void)
                 }
 
                 current_note++;
-                buzzerOn(song[current_note]);
-                setLeds(song[current_note] & (BIT0|BIT1|BIT2|BIT3))
-                note_end = timer + getDuration(song[current_note]);
+                BuzzerOn(song[current_note]);
+                setLeds(song[current_note] & (BIT0|BIT1|BIT2|BIT3));
+                note_end = getTime() + getDuration(song[current_note]);
 
                 //play note at current_note index (buzzer and corresponding LED)
                 //set note_end to timer + note duration
@@ -135,17 +107,17 @@ void main(void)
             break;
         }
 
-        prev_key = key;
+        prevKey = key;
         prev_button = button;
     }
 
 }
 
-#pragma vector=TIMER2_A0_VECTOR
-__interrupt void TIMER_A2_ISR (void)
+void print_str(char *str, int32_t x, int32_t y)
 {
-    timer++;
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext, (uint8_t*) str, AUTO_STRING_LENGTH,
+                                x, y,
+                                TRANSPARENT_TEXT);
+    Graphics_flushBuffer(&g_sContext);
 }
-
-
-
