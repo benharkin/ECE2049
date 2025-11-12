@@ -30,7 +30,7 @@ char getButtons()
 {
     char s1 = ~P7IN & BIT0; // 0th Bit
     char s2 = (~P3IN & BIT6) >> 5; // 1st bit
-    char s3 = (!P2IN & BIT2); // 2nd bit
-    char s4 = (!P7IN & BIT4) >> 1; //3rd bit
+    char s3 = (~P2IN & BIT2); // 2nd bit
+    char s4 = (~P7IN & BIT4) >> 1; //3rd bit
     return s1 | s2 | s3 | s4;
 }
