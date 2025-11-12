@@ -8,13 +8,14 @@
 #ifndef NOTE_H_
 #define NOTE_H_
 
+// Had to append 0 to all of them because there were macro redefinition conflicts.
 #define A0 0
-#define B 1
-#define C 2
-#define D 3
-#define E 4
-#define F 5
-#define G 6
+#define B0 1
+#define C0 2
+#define D0 3
+#define E0 4
+#define F0 5
+#define G0 6
 #define A1 7
 
 // These are the denominator - 1. So a whole note has a denominator of 1,

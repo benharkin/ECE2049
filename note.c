@@ -4,6 +4,7 @@
  *  Created on: Nov 12, 2025
  *      Author: ben
  */
+#include <msp430.h>
 #include "note.h"
 
 // These defines are local to this file
@@ -16,9 +17,8 @@
 
 // Return the period of the note in ACLK ticks (32768 Hz)
 int getPeriod(Note n){
-    static const int[] pitch_map = {73, 65, 62, 55, 49, 46, 41 ,36};
     // 73 is the period in ACLK ticks of the A0, 36 is A1
-    const int[] map = {73, 65, 62, 55, 49, 46, 41 ,36};
+    static const int pitch_map[] = {73, 65, 62, 55, 49, 46, 41 ,36};
     char pitch = n & (BIT0|BIT1|BIT3); // Get the 3 LSB
     return pitch_map[pitch];
 }
@@ -29,7 +29,7 @@ int getDuration(Note n){
 }
 
 char getLED(Note n){
-    static const char[] LED_map = {BIT0, BIT1, BIT2, BIT3, BIT0, BIT1, BIT2, BIT3};
+    static const char LED_map[] = {BIT0, BIT1, BIT2, BIT3, BIT0, BIT1, BIT2, BIT3};
     char pitch = n & (BIT0|BIT1|BIT3); // Get the 3 LSB
     return LED_map[pitch];
 }
