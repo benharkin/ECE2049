@@ -3,6 +3,7 @@
 
 void setupTimer(void);
 long getTime(void);
+long getMillis(void);
 
 
 #endif /* TIMER_H_ */

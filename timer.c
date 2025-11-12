@@ -17,6 +17,12 @@ long getTime(void){
     return timer;
 }
 
+// Returns the time in multiples of ~1ms
+long getMillis(void){
+    // Scale the time by 5ms.
+    return timer * 5;
+}
+
 #pragma vector=TIMER2_A0_VECTOR
 __interrupt void TIMER_A2_ISR (void)
 {
