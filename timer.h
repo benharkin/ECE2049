@@ -2,8 +2,7 @@
 #define TIMER_H_
 
 void setupTimer(void);
-long getTime(void);
-long getMillis(void);
+unsigned long getTime(void);
 
 
 #endif /* TIMER_H_ */

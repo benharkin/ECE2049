@@ -8,15 +8,20 @@
 #define COUNTDOWN_LENGTH 3
 
 void print_str(char *str, int32_t x, int32_t y);
+void clear_display(void);
 
 typedef enum
 {
     NONE, IDLE, COUNTDOWN, PLAYING, GAME_OVER, WIN
 } state_t;
 
+
+
 void main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;    // Stop watchdog timer
+    _BIS_SR(GIE); // Global interupts enable
+    setupTimer();
 
     initLeds();
     configDisplay();
@@ -28,7 +33,7 @@ void main(void)
     state_t state = IDLE;
     state_t prev_state = NONE;
 
-    long countdown_start;
+    unsigned long countdown_start;
     int countdown_elapsed = 0;
     int countdown_elapsed_prev = 0;
 
@@ -63,7 +68,8 @@ void main(void)
             //Display welcome screen, wait for *
             if (state != prev_state)
             {
-                print_str("Welcome to Guitar Hero", 48, 48);
+                print_str("Welcome to", 48, 43);
+                print_str("Guitar Hero", 48, 53);
                 prev_state = state;
             }
 
@@ -75,28 +81,36 @@ void main(void)
         }
         case COUNTDOWN:
         {
+            unsigned long timerview = getTime();
+            char countdown_str[2];
             //Countdown 3 2 1 and then move to playing state
             if (state != prev_state)
             {
-                countdown_start = millis();
+                countdown_start = getTime();
                 countdown_elapsed = 0;
                 countdown_elapsed_prev = 0;
+                countdown_str[0] = COUNTDOWN_LENGTH + 48;
+                clear_display();
+                print_str(countdown_str, 48, 48);
             }
 
-            countdown_elapsed = (millis() - countdown_start) / 1000; // Seconds
-            int countdown = COUNTDOWN_LENGTH - countdown_elapsed;
+            countdown_elapsed = (getTime() - countdown_start) / 1000; // Seconds
+            char countdown = COUNTDOWN_LENGTH - countdown_elapsed;
 
             if(countdown == 0){
                 state = PLAYING;
+                clear_display();
                 break;
             }
 
             if(countdown_elapsed != countdown_elapsed_prev){
-                char countdown_str[] = { countdown + 48, '\0' };
+                countdown_str[0] = countdown + 48;
+                clear_display();
                 print_str(countdown_str, 48, 48);
             }
 
             countdown_elapsed_prev = countdown_elapsed;
+            prev_state = COUNTDOWN;
             break;
         }
         case PLAYING:
@@ -161,9 +175,14 @@ void main(void)
 
 void print_str(char *str, int32_t x, int32_t y)
 {
-    Graphics_clearDisplay(&g_sContext);
     Graphics_drawStringCentered(&g_sContext, (uint8_t*) str, AUTO_STRING_LENGTH,
                                 x, y,
                                 TRANSPARENT_TEXT);
+    Graphics_flushBuffer(&g_sContext);
+}
+
+void clear_display(void)
+{
+    Graphics_clearDisplay(&g_sContext);
     Graphics_flushBuffer(&g_sContext);
 }
