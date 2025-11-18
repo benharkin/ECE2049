@@ -82,7 +82,7 @@ void main(void)
         case COUNTDOWN:
         {
             unsigned long timerview = getTime();
-            char countdown_str[2];
+            char countdown_str[] = {'\0', '\0'};
             //Countdown 3 2 1 and then move to playing state
             if (state != prev_state)
             {
