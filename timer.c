@@ -13,7 +13,7 @@ void setupTimer(void){
     TA2CCTL0 = CCIE;
 }
 
-// Returns the time in multiples of ~5ms
+// Returns the time in multiples of ~1ms
 unsigned long getTime(void){
     __disable_interrupt();
     unsigned long temp = timer * 5;

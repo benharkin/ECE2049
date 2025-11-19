@@ -4,7 +4,7 @@
 #include "note.h"
 #include "timer.h"
 
-#define SONG_LENGTH 28
+#define SONG_LENGTH 3
 #define COUNTDOWN_LENGTH 3
 
 void print_str(char *str, int32_t x, int32_t y);
@@ -15,7 +15,26 @@ typedef enum
     NONE, IDLE, COUNTDOWN, PLAYING, GAME_OVER, WIN
 } state_t;
 
-
+//void displayNotes(Note* notes){
+//    // array to hold the output for the screen
+//    type array[4];
+//    int array_index = 0;
+//    for(int i = 0; i < 4 && array_index < 4; i++){
+//        Note thisNote = notes[i];
+//        if(isEnd(thisnote)){
+//            //return or break or something
+//        }
+//        // get duration -> transform this to a height
+//        int height = ??;
+//        // get led
+//        int led = ??;
+//        for(int i = height; i >= 0; i--){
+//            array[array_index] = led;
+//            array_index++;
+//        }
+//    }
+//    // display array
+//}
 
 void main(void)
 {
@@ -28,7 +47,8 @@ void main(void)
     configKeypad();
     initButtons();
 
-    char song[SONG_LENGTH];
+    //char song[SONG_LENGTH];
+    char song[] = { E0 | HN, D0 | HN, C0 | HN };
 
     state_t state = IDLE;
     state_t prev_state = NONE;
@@ -37,9 +57,9 @@ void main(void)
     int countdown_elapsed = 0;
     int countdown_elapsed_prev = 0;
 
-    int note_end;
+    unsigned long note_end;
 
-    int current_note = 0;
+    int current_note_index = 0;
 
     char key;
     char prevKey;
@@ -68,6 +88,7 @@ void main(void)
             //Display welcome screen, wait for *
             if (state != prev_state)
             {
+                clear_display();
                 print_str("Welcome to", 48, 43);
                 print_str("Guitar Hero", 48, 53);
                 prev_state = state;
@@ -82,7 +103,7 @@ void main(void)
         case COUNTDOWN:
         {
             unsigned long timerview = getTime();
-            char countdown_str[] = {'\0', '\0'};
+            char countdown_str[] = { '\0', '\0' };
             //Countdown 3 2 1 and then move to playing state
             if (state != prev_state)
             {
@@ -92,25 +113,28 @@ void main(void)
                 countdown_str[0] = COUNTDOWN_LENGTH + 48;
                 clear_display();
                 print_str(countdown_str, 48, 48);
+                prev_state = state;
             }
 
             countdown_elapsed = (getTime() - countdown_start) / 1000; // Seconds
             char countdown = COUNTDOWN_LENGTH - countdown_elapsed;
 
-            if(countdown == 0){
+            if (countdown == 0)
+            {
                 state = PLAYING;
                 clear_display();
                 break;
             }
 
-            if(countdown_elapsed != countdown_elapsed_prev){
+            if (countdown_elapsed != countdown_elapsed_prev)
+            {
                 countdown_str[0] = countdown + 48;
                 clear_display();
                 print_str(countdown_str, 48, 48);
             }
 
             countdown_elapsed_prev = countdown_elapsed;
-            prev_state = COUNTDOWN;
+//            prev_state = COUNTDOWN;
             break;
         }
         case PLAYING:
@@ -118,7 +142,16 @@ void main(void)
             //
             //Loop through the song array
             //On each loop
-
+            if (state != prev_state)
+            {
+                current_note_index = 0;
+                BuzzerOn(song[current_note_index]);
+                setLeds(getLED(song[current_note_index]));
+                note_end = getTime() + getDuration(song[current_note_index]);
+                stored_input = 0;
+                prev_state = state;
+            }
+            //displayNotes(song + current_note_index)
             if (getTime() < note_end)
             {
                 //note is still playing
@@ -130,24 +163,24 @@ void main(void)
                 BuzzerOff();
                 setLeds(0);
 
-                if (stored_input != song[current_note]
-                        & (BIT0 | BIT1 | BIT2 | BIT3))
+                if (stored_input != getLED(song[current_note_index]))
                 {
                     //Wrong note, game over
                     state = GAME_OVER;
                     break;
                 }
 
-                if (current_note == SONG_LENGTH - 1)
+                if (current_note_index == SONG_LENGTH - 1)
                 {
                     state = WIN;
                     break;
                 }
 
-                current_note++;
-                BuzzerOn(song[current_note]);
-                setLeds(song[current_note] & (BIT0 | BIT1 | BIT2 | BIT3));
-                note_end = getTime() + getDuration(song[current_note]);
+                current_note_index++;
+                BuzzerOn(song[current_note_index]);
+                setLeds(getLED(song[current_note_index]));
+                note_end = getTime() + getDuration(song[current_note_index]);
+                stored_input = 0;
 
                 //play note at current_note index (buzzer and corresponding LED)
                 //set note_end to timer + note duration
@@ -158,11 +191,23 @@ void main(void)
         {
             //Display game over and after 1 second go to idle
             //Play a losing jingle
+            if (state != prev_state)
+            {
+                clear_display();
+                print_str("Game Over!", 48, 48);
+                prev_state = state;
+            }
             break;
         }
         case WIN:
         {
-            //Display win and after 1 second go to idle
+            if (state != prev_state)
+            {
+                clear_display();
+                print_str("You Win!", 48, 48);
+                //Display win and after 1 second go to idle
+                prev_state = state;
+            }
             break;
         }
         }

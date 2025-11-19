@@ -25,19 +25,34 @@
 #define QN (3 << 3)
 #define EN (7 << 3)
 #define SN (15 << 3)
-#define TN (31 << 3)
+
+// If the MSB is 1, the note should not be played.
+#define REST (1 << 7)
 
 // Usage:
 // A0 | HN is an A0 half note.
 
 // Note type, since we are using a special bit layout
+// Bit Layout
+// 0000 0000
+// ^^^^ ^^^^
+// |||| |Pitch
+// |Duration
+// Rest
 typedef char Note;
 
 // Returns the period of the note in quartz ticks
 int getPeriod(Note n);
 
-// Returns the length of the note in quartz ticks
+// Returns the length of the note in ms
 int getDuration(Note n);
+
+// Returns if this note is a rest.
+int isRest(Note n);
+
+
+// To implent
+int isLast(Note n);
 
 // Returns a char with the least significant 4 bits representing the status of the LEDS for the note.
 // The LSB is the leftmost and the MSB is the rightmost. Can change this if necessary.
