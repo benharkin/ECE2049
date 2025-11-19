@@ -3,6 +3,8 @@
 *.o
 *.obj
 *.out
+.jxbrowser.userdata/*
+.metadata/*
 
 Debug/*
 
