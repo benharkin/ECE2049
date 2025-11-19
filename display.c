@@ -27,47 +27,55 @@ void clear_display(void)
 void displayNotes(Note* notes){
     // array to hold the output for the screen
     // Need LEDs of note, and duration later
-    char quarters[4];
+    int16_t quarters[4];
 
     for(int i = 0; i < 4; i++){
         Note thisNote = notes[i];
 
-//        if(isEnd(thisNote)){
-//            break;
-//        }
-
-        int height = getDuration(thisNote)/1000;
-        i += height-1;
         char position_bit = getLED(thisNote); // Bitwise position for printing
-        int position;
+        int16_t position;
         if(position_bit == BIT0)
             position = 0;
         else if(position_bit == BIT1)
             position = 1;
         else if(position_bit == BIT2)
             position = 2;
-        else(position_bit == BIT3)
+        else
             position = 3;
+        quarters[i] = position;
 
+        if(!isEnd(thisNote)){
+            int height = getDuration(thisNote)/1000;
+            i += height-1;
 
-
-        for(int j = height; j >= 0; j--){
-            quarters[j] = position;
+            for(int j = height-1; j >= 0; j--){
+                quarters[j+i] = position;
+            }
+        }
+        else{
+            while(i<4){
+                quarters[i] = 5;
+                i++;
+            }
         }
     }
     // display array
-    // Bottom Note
-    struct Graphics_Rectangle note1 = {position*24, y min, (position+1)*24, ymax}
-    Graphics_fillRectangleOnDisplay((&g_sContext.Graphics_Display, const Graphics_Rectangle *rect, uint16_t value);
-    // Next Note
-    Graphics_fillRectangleOnDisplay(const Graphics_Display *display,
-                const Graphics_Rectangle *rect, uint16_t value);
-    // Third Note
-    Graphics_fillRectangleOnDisplay(const Graphics_Display *display,
-                const Graphics_Rectangle *rect, uint16_t value);
-    // Top Note
-    Graphics_fillRectangleOnDisplay(const Graphics_Display *display,
-                const Graphics_Rectangle *rect, uint16_t value);
 
+
+    // Bottom Note
+    Graphics_Rectangle note0 = {quarters[0]*24, 0, (quarters[0]+1)*24, 24};
+    Graphics_fillRectangleOnDisplay((&g_sContext)->display, &note0, 0);
+//    Graphics_fillRectangleOnDisplay(((&g_sContext)->Graphics_Display, note0, 0);
+    // Next Note
+    Graphics_Rectangle note1 = {quarters[1]*24, 25, (quarters[1]+1)*24, 48};
+    Graphics_fillRectangleOnDisplay((&g_sContext)->display, &note1, 0);
+    // Third Note
+    Graphics_Rectangle note2 = {quarters[2]*24, 49, (quarters[2]+1)*24, 72};
+    Graphics_fillRectangleOnDisplay((&g_sContext)->display, &note2, 0);
+    // Top Note
+    Graphics_Rectangle note3 = {quarters[3]*24, 73, (quarters[3]+1)*24, 96};
+    Graphics_fillRectangleOnDisplay((&g_sContext)->display, &note3, 0);
+
+    show_print();
 
 }
