@@ -3,38 +3,17 @@
 #include "buttons.h"
 #include "note.h"
 #include "timer.h"
+#include "display.h"
 
 #define SONG_LENGTH 3
 #define COUNTDOWN_LENGTH 3
-
-void print_str(char *str, int32_t x, int32_t y);
-void clear_display(void);
 
 typedef enum
 {
     NONE, IDLE, COUNTDOWN, PLAYING, GAME_OVER, WIN
 } state_t;
 
-//void displayNotes(Note* notes){
-//    // array to hold the output for the screen
-//    type array[4];
-//    int array_index = 0;
-//    for(int i = 0; i < 4 && array_index < 4; i++){
-//        Note thisNote = notes[i];
-//        if(isEnd(thisnote)){
-//            //return or break or something
-//        }
-//        // get duration -> transform this to a height
-//        int height = ??;
-//        // get led
-//        int led = ??;
-//        for(int i = height; i >= 0; i--){
-//            array[array_index] = led;
-//            array_index++;
-//        }
-//    }
-//    // display array
-//}
+
 
 void main(void)
 {
@@ -91,6 +70,7 @@ void main(void)
                 clear_display();
                 print_str("Welcome to", 48, 43);
                 print_str("Guitar Hero", 48, 53);
+                show_print();
                 prev_state = state;
             }
 
@@ -113,6 +93,7 @@ void main(void)
                 countdown_str[0] = COUNTDOWN_LENGTH + 48;
                 clear_display();
                 print_str(countdown_str, 48, 48);
+                show_print();
                 prev_state = state;
             }
 
@@ -131,6 +112,7 @@ void main(void)
                 countdown_str[0] = countdown + 48;
                 clear_display();
                 print_str(countdown_str, 48, 48);
+                show_print();
             }
 
             countdown_elapsed_prev = countdown_elapsed;
@@ -195,6 +177,7 @@ void main(void)
             {
                 clear_display();
                 print_str("Game Over!", 48, 48);
+                show_print();
                 prev_state = state;
             }
             break;
@@ -205,6 +188,7 @@ void main(void)
             {
                 clear_display();
                 print_str("You Win!", 48, 48);
+                show_print();
                 //Display win and after 1 second go to idle
                 prev_state = state;
             }
@@ -218,16 +202,3 @@ void main(void)
 
 }
 
-void print_str(char *str, int32_t x, int32_t y)
-{
-    Graphics_drawStringCentered(&g_sContext, (uint8_t*) str, AUTO_STRING_LENGTH,
-                                x, y,
-                                TRANSPARENT_TEXT);
-    Graphics_flushBuffer(&g_sContext);
-}
-
-void clear_display(void)
-{
-    Graphics_clearDisplay(&g_sContext);
-    Graphics_flushBuffer(&g_sContext);
-}
