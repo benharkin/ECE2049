@@ -40,8 +40,10 @@ void displayNotes(Note* notes){
             position = 1;
         else if(position_bit == BIT2)
             position = 2;
-        else
+        else if(position_bit == BIT3)
             position = 3;
+        else
+            position = 5
         quarters[i] = position;
 
         if(!isEnd(thisNote)){
