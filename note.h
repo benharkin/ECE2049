@@ -7,11 +7,13 @@
 
 #ifndef NOTE_H_
 #define NOTE_H_
+#define WHOLE_NOTE 2500 // So a whole note is 4 seconds
+
 
 // Note
 // 0000 0000
 // |||| |^^^
-// |||| |Pitch
+// ||||_|Pitch
 // |||Duration
 // ||Rest
 // Unused
@@ -33,7 +35,7 @@ typedef char Note;
 // must be set or the note will be considered the null terminator.
 #define WN (1 << 3)
 #define HN (2 << 3)
-#define QN (4 << 3)
+#define QN (3 << 3)
 
 // If BIT4 (5th bit) is 1, the note is silent.
 #define REST BIT5
@@ -54,7 +56,7 @@ int getDuration(Note n);
 int isRest(Note n);
 
 // Returns if the note is the null terminator (0) equivalent to n == 0
-int isLast(Note n);
+int isEnd(Note n);
 
 // Returns a char with the least significant 4 bits representing the status of the LEDS for the note.
 // The LSB is the leftmost and the MSB is the rightmost. Can change this if necessary.

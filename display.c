@@ -43,11 +43,11 @@ void displayNotes(Note* notes){
         else if(position_bit == BIT3)
             position = 3;
         else
-            position = 5
+            position = 5;
         quarters[i] = position;
 
         if(!isEnd(thisNote)){
-            int height = getDuration(thisNote)/1000;
+            int height = getDuration(thisNote)/(WHOLE_NOTE/4);
             i += height-1;
 
             for(int j = height-1; j >= 0; j--){
@@ -63,7 +63,7 @@ void displayNotes(Note* notes){
     }
     // display array
 
-
+    clear_display();
     // Bottom Note
     Graphics_Rectangle note0 = {quarters[0]*24, 0, (quarters[0]+1)*24, 24};
     Graphics_fillRectangleOnDisplay((&g_sContext)->display, &note0, 0);

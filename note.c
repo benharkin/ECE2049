@@ -9,11 +9,10 @@
 
 // These defines are local to this file
 //#define QUARTZ 32768
-#define WHOLE_NOTE 4000 // So a whole note is 4 seconds
 
 #define PITCH(n) n & (BIT0|BIT1|BIT2)
 #define DURATION(n) (n & (BIT3|BIT4)) >> 3
-#define REST(n) (n & BIT5) >> 5
+#define REST_BITS(n) (n & BIT5) >> 5
 #define END(n) n == 0
 
 // Return the period of the note in ACLK ticks (32768 Hz)
@@ -24,7 +23,8 @@ int getPeriod(Note n){
 }
 
 int getDuration(Note n){
-    char denominator = DURATION(n);
+    static const int duration_map[] = {0, 1, 2, 4};
+    char denominator = duration_map[DURATION(n)];
     if(denominator == 0){ // If note is null terminator
         return 0;
     }
@@ -32,7 +32,7 @@ int getDuration(Note n){
 }
 
 int isRest(Note n){
-    return REST(n);
+    return REST_BITS(n);
 }
 
 int isEnd(Note n){
@@ -41,6 +41,9 @@ int isEnd(Note n){
 
 char getLED(Note n){
     static const char LED_map[] = {BIT0, BIT1, BIT2, BIT3, BIT0, BIT1, BIT2, BIT3};
+    if(REST_BITS(n)){
+        return 0;
+    }
     return LED_map[PITCH(n)];
 }
 

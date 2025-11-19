@@ -5,14 +5,48 @@
 #include "timer.h"
 #include "display.h"
 
-#define SONG_LENGTH 3
 #define COUNTDOWN_LENGTH 3
 
 typedef enum
 {
     NONE, IDLE, COUNTDOWN, PLAYING, GAME_OVER, WIN
 } state_t;
+/*
+char twinkle[] = {
+        C0 | HN, REST | QN ,C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
+        A1 | HN, A1 | HN, G0 | WN,
 
+        F0 | HN, F0 | HN, E0 | HN, E0 | HN,
+        D0 | HN, D0 | HN, C0 | WN,
+
+        G0 | HN, G0 | HN, F0 | HN, F0 | HN,
+        E0 | HN, E0 | HN, D0 | WN,
+
+        G0 | HN, G0 | HN, F0 | HN, F0 | HN,
+        E0 | HN, E0 | HN, D0 | WN,
+
+        C0 | HN, C0 | HN, G0 | HN, G0 | HN,
+        A1 | HN, A1 | HN, G0 | WN, 0
+    };
+*/
+char twinkle[] = {
+    C0 | HN, REST | QN,  C0 | HN, REST | QN,  G0 | HN, REST | QN,  G0 | HN, REST | QN,
+    A1 | HN, REST | QN,  A1 | HN, REST | QN,  G0 | WN, REST | QN,
+
+    F0 | HN, REST | QN,  F0 | HN, REST | QN,  E0 | HN, REST | QN,  E0 | HN, REST | QN,
+    D0 | HN, REST | QN,  D0 | HN, REST | QN,  C0 | WN, REST | QN,
+
+    G0 | HN, REST | QN,  G0 | HN, REST | QN,  F0 | HN, REST | QN,  F0 | HN, REST | QN,
+    E0 | HN, REST | QN,  E0 | HN, REST | QN,  D0 | WN, REST | QN,
+
+    G0 | HN, REST | QN,  G0 | HN, REST | QN,  F0 | HN, REST | QN,  F0 | HN, REST | QN,
+    E0 | HN, REST | QN,  E0 | HN, REST | QN,  D0 | WN, REST | QN,
+
+    C0 | HN, REST | QN,  C0 | HN, REST | QN,  G0 | HN, REST | QN,  G0 | HN, REST | QN,
+    A1 | HN, REST | QN,  A1 | HN, REST | QN,  G0 | WN, REST | QN,
+
+    0
+};
 
 
 void main(void)
@@ -26,8 +60,7 @@ void main(void)
     configKeypad();
     initButtons();
 
-    //char song[SONG_LENGTH];
-    char song[] = { E0 | HN, D0 | HN, C0 | HN };
+    char *song = twinkle;
 
     state_t state = IDLE;
     state_t prev_state = NONE;
@@ -127,42 +160,56 @@ void main(void)
             if (state != prev_state)
             {
                 current_note_index = 0;
-                BuzzerOn(song[current_note_index]);
+                BuzzerOn(getPeriod(song[current_note_index]));
                 setLeds(getLED(song[current_note_index]));
                 note_end = getTime() + getDuration(song[current_note_index]);
+                //quarter_end =  getTime() + WHOLE_NOTE/4;
+                displayNotes(song + current_note_index);
                 stored_input = 0;
                 prev_state = state;
             }
-            //displayNotes(song + current_note_index)
+
             if (getTime() < note_end)
             {
                 //note is still playing
                 //check if button input matches the note
                 stored_input |= button;
+                //if(getTime() < quarter_end)
+                //    displayNotes(song + current_note_index);
+
             }
             else
             {
+                Note current_note = song[current_note_index];
                 BuzzerOff();
                 setLeds(0);
 
-                if (stored_input != getLED(song[current_note_index]))
+                if (stored_input != getLED(current_note))
                 {
                     //Wrong note, game over
                     state = GAME_OVER;
                     break;
                 }
 
-                if (current_note_index == SONG_LENGTH - 1)
+                if (isEnd(current_note))
                 {
                     state = WIN;
                     break;
                 }
 
+
+
                 current_note_index++;
-                BuzzerOn(song[current_note_index]);
-                setLeds(getLED(song[current_note_index]));
-                note_end = getTime() + getDuration(song[current_note_index]);
+                current_note = song[current_note_index];
+                if (!isRest(current_note)){
+                    BuzzerOn(getPeriod(current_note));
+                }
+
+                setLeds(getLED(current_note));
+                note_end = getTime() + getDuration(current_note);
                 stored_input = 0;
+                displayNotes(song + current_note_index);
+
 
                 //play note at current_note index (buzzer and corresponding LED)
                 //set note_end to timer + note duration
