@@ -24,8 +24,19 @@ int getPeriod(Note n){
 }
 
 int getDuration(Note n){
-    char denominator = n >> 3; // Discard the 3 LSB
-    return WHOLE_NOTE / (denominator + 1);
+    char denominator = (n & (BIT3|BIT4)) >> 3;
+    if(denominator == 0){ // If note is null terminator
+        return 0;
+    }
+    return WHOLE_NOTE / denominator;
+}
+
+int isRest(Note n){
+    return (n & BIT5) >> 5;
+}
+
+int isEnd(Note n){
+    return n == 0;
 }
 
 char getLED(Note n){
