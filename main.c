@@ -12,42 +12,55 @@ typedef enum
     NONE, IDLE, COUNTDOWN, PLAYING, GAME_OVER, WIN
 } state_t;
 /*
+ char twinkle[] = {
+ C0 | HN, REST | QN ,C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
+ A1 | HN, A1 | HN, G0 | WN,
+
+ F0 | HN, F0 | HN, E0 | HN, E0 | HN,
+ D0 | HN, D0 | HN, C0 | WN,
+
+ G0 | HN, G0 | HN, F0 | HN, F0 | HN,
+ E0 | HN, E0 | HN, D0 | WN,
+
+ G0 | HN, G0 | HN, F0 | HN, F0 | HN,
+ E0 | HN, E0 | HN, D0 | WN,
+
+ C0 | HN, C0 | HN, G0 | HN, G0 | HN,
+ A1 | HN, A1 | HN, G0 | WN, 0
+ };
+ */
 char twinkle[] = {
-        C0 | HN, REST | QN ,C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
-        A1 | HN, A1 | HN, G0 | WN,
+C0 | HN,
+                   REST | QN, C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
+                   REST | QN,
+                   A1 | HN,
+                   REST | QN, A1 | HN, REST | QN, G0 | WN, REST | QN,
 
-        F0 | HN, F0 | HN, E0 | HN, E0 | HN,
-        D0 | HN, D0 | HN, C0 | WN,
+                   F0 | HN,
+                   REST | QN, F0 | HN, REST | QN, E0 | HN, REST | QN, E0 | HN,
+                   REST | QN,
+                   D0 | HN,
+                   REST | QN, D0 | HN, REST | QN, C0 | WN, REST | QN,
 
-        G0 | HN, G0 | HN, F0 | HN, F0 | HN,
-        E0 | HN, E0 | HN, D0 | WN,
+                   G0 | HN,
+                   REST | QN, G0 | HN, REST | QN, F0 | HN, REST | QN, F0 | HN,
+                   REST | QN,
+                   E0 | HN,
+                   REST | QN, E0 | HN, REST | QN, D0 | WN, REST | QN,
 
-        G0 | HN, G0 | HN, F0 | HN, F0 | HN,
-        E0 | HN, E0 | HN, D0 | WN,
+                   G0 | HN,
+                   REST | QN, G0 | HN, REST | QN, F0 | HN, REST | QN, F0 | HN,
+                   REST | QN,
+                   E0 | HN,
+                   REST | QN, E0 | HN, REST | QN, D0 | WN, REST | QN,
 
-        C0 | HN, C0 | HN, G0 | HN, G0 | HN,
-        A1 | HN, A1 | HN, G0 | WN, 0
-    };
-*/
-char twinkle[] = {
-    C0 | HN, REST | QN,  C0 | HN, REST | QN,  G0 | HN, REST | QN,  G0 | HN, REST | QN,
-    A1 | HN, REST | QN,  A1 | HN, REST | QN,  G0 | WN, REST | QN,
+                   C0 | HN,
+                   REST | QN, C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
+                   REST | QN,
+                   A1 | HN,
+                   REST | QN, A1 | HN, REST | QN, G0 | WN, REST | QN,
 
-    F0 | HN, REST | QN,  F0 | HN, REST | QN,  E0 | HN, REST | QN,  E0 | HN, REST | QN,
-    D0 | HN, REST | QN,  D0 | HN, REST | QN,  C0 | WN, REST | QN,
-
-    G0 | HN, REST | QN,  G0 | HN, REST | QN,  F0 | HN, REST | QN,  F0 | HN, REST | QN,
-    E0 | HN, REST | QN,  E0 | HN, REST | QN,  D0 | WN, REST | QN,
-
-    G0 | HN, REST | QN,  G0 | HN, REST | QN,  F0 | HN, REST | QN,  F0 | HN, REST | QN,
-    E0 | HN, REST | QN,  E0 | HN, REST | QN,  D0 | WN, REST | QN,
-
-    C0 | HN, REST | QN,  C0 | HN, REST | QN,  G0 | HN, REST | QN,  G0 | HN, REST | QN,
-    A1 | HN, REST | QN,  A1 | HN, REST | QN,  G0 | WN, REST | QN,
-
-    0
-};
-
+                   0 };
 
 void main(void)
 {
@@ -64,10 +77,6 @@ void main(void)
 
     state_t state = IDLE;
     state_t prev_state = NONE;
-
-    unsigned long countdown_start;
-    int countdown_elapsed = 0;
-    int countdown_elapsed_prev = 0;
 
     unsigned long note_end;
 
@@ -115,41 +124,31 @@ void main(void)
         }
         case COUNTDOWN:
         {
-            unsigned long timerview = getTime();
-            char countdown_str[] = { '\0', '\0' };
-            //Countdown 3 2 1 and then move to playing state
+            unsigned int prevSeconds;
+            int countdown;
             if (state != prev_state)
             {
-                countdown_start = getTime();
-                countdown_elapsed = 0;
-                countdown_elapsed_prev = 0;
-                countdown_str[0] = COUNTDOWN_LENGTH + 48;
-                clear_display();
-                print_str(countdown_str, 48, 48);
-                show_print();
+                prevSeconds = 0; // So it will always not equal the current time on transition.
+                countdown = COUNTDOWN_LENGTH;
                 prev_state = state;
             }
 
-            countdown_elapsed = (getTime() - countdown_start) / 1000; // Seconds
-            char countdown = COUNTDOWN_LENGTH - countdown_elapsed;
-
-            if (countdown == 0)
-            {
+            if(countdown == 0){
                 state = PLAYING;
-                clear_display();
                 break;
             }
 
-            if (countdown_elapsed != countdown_elapsed_prev)
-            {
-                countdown_str[0] = countdown + 48;
+            if(getSeconds() != prevSeconds){
+                // Print the countdown
+                char countdown_str[] = {countdown + 48, '\0' };
                 clear_display();
                 print_str(countdown_str, 48, 48);
                 show_print();
-            }
 
-            countdown_elapsed_prev = countdown_elapsed;
-//            prev_state = COUNTDOWN;
+                // Decrement and store time to wait 1s until next action.
+                countdown--;
+                prevSeconds = getSeconds();
+            }
             break;
         }
         case PLAYING:
@@ -197,11 +196,10 @@ void main(void)
                     break;
                 }
 
-
-
                 current_note_index++;
                 current_note = song[current_note_index];
-                if (!isRest(current_note)){
+                if (!isRest(current_note))
+                {
                     BuzzerOn(getPeriod(current_note));
                 }
 
@@ -209,7 +207,6 @@ void main(void)
                 note_end = getTime() + getDuration(current_note);
                 stored_input = 0;
                 displayNotes(song + current_note_index);
-
 
                 //play note at current_note index (buzzer and corresponding LED)
                 //set note_end to timer + note duration
