@@ -32,6 +32,7 @@ void main(void)
 
     char key;
     char prevKey = 0;
+    int count = 0;
 
     while (1)
     {
@@ -146,8 +147,10 @@ void main(void)
                 this_note = song[note_index];
                 note_start = now;
                 note_end = note_start + getDuration(this_note);
+                displayNotes(song, note_index, 0);
                 display_skip_rows = 0;
                 input = 0;
+                count = 0;
             }
 
             // Reached end of the song
@@ -169,6 +172,11 @@ void main(void)
                 }
             }
 
+            if((now - note_start) / (WHOLE_NOTE/4) == count + 1)
+            {
+                count++;
+            }
+
             // Stop playing the note with a buffer before the true end
             if (now >= note_end - NOTE_SPACING && now != prev_time)
             {
@@ -176,14 +184,16 @@ void main(void)
                 setLeds(0);
             }
 
-            if ((now - note_start) / (WHOLE_NOTE / 8)
-                    != (prev_time - note_start) / (WHOLE_NOTE / 8))
-            {
-                display_skip_rows++;
-                DisplayRow rows[8];
-                calcRows(song + note_index, rows, 8, display_skip_rows);
-                drawRowsDirect(rows, 8);
-            }
+
+
+//            if ((now - note_start) / (WHOLE_NOTE / 8)
+//                    != (prev_time - note_start) / (WHOLE_NOTE / 8))
+//            {
+//                display_skip_rows++;
+//                DisplayRow rows[8];
+//                calcRows(song + note_index, rows, 8, display_skip_rows);
+//                drawRowsDirect(rows, 8);
+//            }
 
             prev_time = now;
 

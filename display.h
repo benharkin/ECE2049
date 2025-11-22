@@ -27,6 +27,6 @@ void clear_display(void);
 void drawRowsDirect(DisplayRow *rows, unsigned int num_rows);
 void calcRows(Note *notes, DisplayRow *output, unsigned int max_rows, unsigned int skip_rows);
 
-void displayNotes(Note* notes);
+void displayNotes(Note *notes, int note_index, int count);
 
 #endif /* DISPLAY_H_ */
