@@ -7,7 +7,7 @@
 
 #ifndef NOTE_H_
 #define NOTE_H_
-#define WHOLE_NOTE 2500 // So a whole note is 4 seconds
+#define WHOLE_NOTE 320
 
 
 // Note

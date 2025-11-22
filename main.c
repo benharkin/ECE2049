@@ -6,61 +6,76 @@
 #include "display.h"
 
 #define COUNTDOWN_LENGTH 3
+#define NOTE_SPACING 2 // Number of ticks of silence as notes start and end.
 
 typedef enum
 {
     NONE, IDLE, COUNTDOWN, PLAYING, GAME_OVER, WIN
 } state_t;
-/*
- char twinkle[] = {
- C0 | HN, REST | QN ,C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
- A1 | HN, A1 | HN, G0 | WN,
 
- F0 | HN, F0 | HN, E0 | HN, E0 | HN,
- D0 | HN, D0 | HN, C0 | WN,
-
- G0 | HN, G0 | HN, F0 | HN, F0 | HN,
- E0 | HN, E0 | HN, D0 | WN,
-
- G0 | HN, G0 | HN, F0 | HN, F0 | HN,
- E0 | HN, E0 | HN, D0 | WN,
-
- C0 | HN, C0 | HN, G0 | HN, G0 | HN,
- A1 | HN, A1 | HN, G0 | WN, 0
- };
- */
 char twinkle[] = {
 C0 | HN,
-                   REST | QN, C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
-                   REST | QN,
+                   C0 | HN, G0 | HN, G0 | HN,
                    A1 | HN,
-                   REST | QN, A1 | HN, REST | QN, G0 | WN, REST | QN,
+                   A1 | HN, G0 | WN,
 
                    F0 | HN,
-                   REST | QN, F0 | HN, REST | QN, E0 | HN, REST | QN, E0 | HN,
-                   REST | QN,
+                   F0 | HN, E0 | HN, E0 | HN,
                    D0 | HN,
-                   REST | QN, D0 | HN, REST | QN, C0 | WN, REST | QN,
+                   D0 | HN, C0 | WN,
 
                    G0 | HN,
-                   REST | QN, G0 | HN, REST | QN, F0 | HN, REST | QN, F0 | HN,
-                   REST | QN,
+                   G0 | HN, F0 | HN, F0 | HN,
                    E0 | HN,
-                   REST | QN, E0 | HN, REST | QN, D0 | WN, REST | QN,
+                   E0 | HN, D0 | WN,
 
                    G0 | HN,
-                   REST | QN, G0 | HN, REST | QN, F0 | HN, REST | QN, F0 | HN,
-                   REST | QN,
+                   G0 | HN, F0 | HN, F0 | HN,
                    E0 | HN,
-                   REST | QN, E0 | HN, REST | QN, D0 | WN, REST | QN,
+                   E0 | HN, D0 | WN,
 
                    C0 | HN,
-                   REST | QN, C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
-                   REST | QN,
+                   C0 | HN, G0 | HN, G0 | HN,
                    A1 | HN,
-                   REST | QN, A1 | HN, REST | QN, G0 | WN, REST | QN,
+                   A1 | HN, G0 | WN, 0 };
 
-                   0 };
+//char twinkle[] = {
+//C0 | HN,
+//                   REST | QN, C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
+//                   REST | QN,
+//                   A1 | HN,
+//                   REST | QN,
+//                   A1 | HN, REST | QN, G0 | WN, REST | QN,
+//
+//                   F0 | HN,
+//                   REST | QN, F0 | HN, REST | QN, E0 | HN, REST | QN, E0 | HN,
+//                   REST | QN,
+//                   D0 | HN,
+//                   REST | QN,
+//                   D0 | HN, REST | QN, C0 | WN, REST | QN,
+//
+//                   G0 | HN,
+//                   REST | QN, G0 | HN, REST | QN, F0 | HN, REST | QN, F0 | HN,
+//                   REST | QN,
+//                   E0 | HN,
+//                   REST | QN,
+//                   E0 | HN, REST | QN, D0 | WN, REST | QN,
+//
+//                   G0 | HN,
+//                   REST | QN, G0 | HN, REST | QN, F0 | HN, REST | QN, F0 | HN,
+//                   REST | QN,
+//                   E0 | HN,
+//                   REST | QN,
+//                   E0 | HN, REST | QN, D0 | WN, REST | QN,
+//
+//                   C0 | HN,
+//                   REST | QN, C0 | HN, REST | QN, G0 | HN, REST | QN, G0 | HN,
+//                   REST | QN,
+//                   A1 | HN,
+//                   REST | QN,
+//                   A1 | HN, REST | QN, G0 | WN, REST | QN,
+//
+//                   0 };
 
 void main(void)
 {
@@ -78,23 +93,13 @@ void main(void)
     state_t state = IDLE;
     state_t prev_state = NONE;
 
-    unsigned long note_end;
-
-    int current_note_index = 0;
-
     char key;
-    char prevKey;
-
-    char button;
-    char prev_button;
-
-    char stored_input;
+    char prevKey = 0;
 
     while (1)
     {
 
         key = getKey();
-        button = getButtons();
 
         // # key resets the game to IDLE
         if (key != prevKey && key == '#')
@@ -133,14 +138,16 @@ void main(void)
                 prev_state = state;
             }
 
-            if(countdown == 0){
+            if (countdown == 0)
+            {
                 state = PLAYING;
                 break;
             }
 
-            if(getSeconds() != prevSeconds){
+            if (getSeconds() != prevSeconds)
+            {
                 // Print the countdown
-                char countdown_str[] = {countdown + 48, '\0' };
+                char countdown_str[] = { countdown + 48, '\0' };
                 clear_display();
                 print_str(countdown_str, 48, 48);
                 show_print();
@@ -156,61 +163,72 @@ void main(void)
             //
             //Loop through the song array
             //On each loop
+            unsigned int note_index;
+            unsigned long prev_time;
+            unsigned long note_start;
+            unsigned char input = 0;
+            Note this_note;
+
+            unsigned long now = getTime();
+
             if (state != prev_state)
             {
-                current_note_index = 0;
-                BuzzerOn(getPeriod(song[current_note_index]));
-                setLeds(getLED(song[current_note_index]));
-                note_end = getTime() + getDuration(song[current_note_index]);
-                //quarter_end =  getTime() + WHOLE_NOTE/4;
-                displayNotes(song + current_note_index);
-                stored_input = 0;
+                note_index = 0;
+                prev_time = 0;
+                note_start = now;
+                this_note = song[note_index];
                 prev_state = state;
             }
 
-            if (getTime() < note_end)
-            {
-                //note is still playing
-                //check if button input matches the note
-                stored_input |= button;
-                //if(getTime() < quarter_end)
-                //    displayNotes(song + current_note_index);
+            unsigned long note_end = note_start + getDuration(this_note);
 
-            }
-            else
+            // Prev note has ended
+            if (now > note_end)
             {
-                Note current_note = song[current_note_index];
+                note_index++;
+                this_note = song[note_index];
+                note_start = now;
+                input = 0;
+            }
+
+            // Reached end of the song
+            if (isEnd(this_note))
+            {
+                state = WIN;
+                break;
+            }
+
+            // Begin playing the note after a delay
+            if (now >= note_start + NOTE_SPACING && now != prev_time)
+            {
+                if (!isRest(this_note))
+                {
+                    BuzzerOn(getPeriod(this_note));
+                    setLeds(getLED(this_note));
+                }
+            }
+
+            // Stop playing the note with a buffer before the true end
+            if (now >= note_end - NOTE_SPACING && now != prev_time)
+            {
                 BuzzerOff();
                 setLeds(0);
-
-                if (stored_input != getLED(current_note))
-                {
-                    //Wrong note, game over
-                    state = GAME_OVER;
-                    break;
-                }
-
-                if (isEnd(current_note))
-                {
-                    state = WIN;
-                    break;
-                }
-
-                current_note_index++;
-                current_note = song[current_note_index];
-                if (!isRest(current_note))
-                {
-                    BuzzerOn(getPeriod(current_note));
-                }
-
-                setLeds(getLED(current_note));
-                note_end = getTime() + getDuration(current_note);
-                stored_input = 0;
-                displayNotes(song + current_note_index);
-
-                //play note at current_note index (buzzer and corresponding LED)
-                //set note_end to timer + note duration
             }
+
+            input |= getButtons();
+            // Any of the other bits are 1 -> any wrong key was pressed
+            int wrong_note = (input & ~getLED(this_note)) != 0;
+            // The correct bit is 1 -> correct key was pressed
+            int correct_note = (input & getLED(this_note)) != 0;
+
+            // Wrong input at any time or no correct input by the end
+            if (wrong_note || (now > note_end && !correct_note))
+            {
+                state = GAME_OVER;
+                break;
+            }
+
+            prev_time = now;
             break;
         }
         case GAME_OVER:
@@ -241,7 +259,6 @@ void main(void)
         }
 
         prevKey = key;
-        prev_button = button;
     }
 
 }
