@@ -16,32 +16,50 @@
 #define END(n) n == 0
 
 // Return the period of the note in ACLK ticks (32768 Hz)
-int getPeriod(Note n){
+int getPeriod(Note n)
+{
     // 73 is the period in ACLK ticks of the A0, 36 is A1
-    static const int pitch_map[] = {73, 65, 62, 55, 49, 46, 41 ,36};
+    static const int pitch_map[] = { 73, 65, 62, 55, 49, 46, 41, 36 };
     return pitch_map[PITCH(n)];
 }
 
-int getDuration(Note n){
-    static const int duration_map[] = {0, 1, 2, 4};
+int getDuration(Note n)
+{
+    static const int duration_map[] = { 0, 1, 2, 4 };
     char denominator = duration_map[DURATION(n)];
-    if(denominator == 0){ // If note is null terminator
+    if (denominator == 0)
+    { // If note is null terminator
         return 0;
     }
     return WHOLE_NOTE / denominator;
 }
 
-int isRest(Note n){
+int getEighths(Note n)
+{
+    static const int duration_map[] = { 0, 1, 2, 4 };
+    char denominator = duration_map[DURATION(n)];
+    if(denominator == 0){
+        return 0;
+    }
+    return 8 / denominator;
+}
+
+int isRest(Note n)
+{
     return REST_BITS(n);
 }
 
-int isEnd(Note n){
+int isEnd(Note n)
+{
     return END(n);
 }
 
-char getLED(Note n){
-    static const char LED_map[] = {BIT0, BIT1, BIT2, BIT3, BIT0, BIT1, BIT2, BIT3};
-    if(REST_BITS(n)){
+char getLED(Note n)
+{
+    static const char LED_map[] = { BIT0, BIT1, BIT2, BIT3, BIT0, BIT1, BIT2,
+                                    BIT3 };
+    if (REST_BITS(n))
+    {
         return 0;
     }
     return LED_map[PITCH(n)];

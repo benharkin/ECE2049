@@ -49,8 +49,11 @@ typedef char Note;
 // Returns the period of the note in quartz ticks
 int getPeriod(Note n);
 
-// Returns the length of the note in ms
+// Returns the length of the note in timer ticks
 int getDuration(Note n);
+
+// Returns the length of the note as a multiple of eighth notes
+int getEighths(Note n);
 
 // Returns if this note is a rest.
 int isRest(Note n);
