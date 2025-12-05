@@ -8,15 +8,18 @@
 #ifndef SENSOR_H_
 #define SENSOR_H_
 
-#define CALADC12_15V_30C *((unsigned int *)0x1A1A)
-#define CALADC12_15V_85C *((unsigned int *)0x1A1C)
+// Temperature Sensor Calibration readings for 2.5V from TLV
+#define CALADC12_25V_30C *((unsigned int *)0x1A22)
+#define CALADC12_25V_85C *((unsigned int *)0x1A24)
 #define MOVING_AVG_LENGTH 36
 
 void setupADC(void);
 float get_Temp_C(void);
+void updateTempAverage(unsigned long time);
 float get_Temp_AVG_C(void);
 float get_Temp_AVG_F(void);
-float get_Pot_Scaled(int min, int max);
+
+int get_Pot_Scaled(int min, int max);
 
 
 #endif /* SENSOR_H_ */
