@@ -3,7 +3,7 @@
 #include "buttons.h"
 #include "timer.h"
 #include "display.h"
-
+#include "sensor.h"
 
 typedef enum
 {
@@ -41,6 +41,7 @@ void main(void)
         if(time != prev_time)
         {
             // Update temp
+            updateTempAverage(time);
             prev_time = time;
         }
 
