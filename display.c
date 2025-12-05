@@ -42,13 +42,13 @@ void numToCharBuf(int num, char *buf, unsigned int buf_len)
 void displayTime(timedate_t td)
 {
     char time[] = "HH:MM:SS";
-    numToCharBuf(td.hour, date, 2);
-    numToCharBuf(td.minute, date + 3, 2);
-    numToCharBuf(td.second, date + 6, 2);
+    numToCharBuf(td.hour, time, 2);
+    numToCharBuf(td.minute, time + 3, 2);
+    numToCharBuf(td.second, time + 6, 2);
     print_str(time, 48, 32, CLEAR);
 }
 
-void displayDate(timedate_t)
+void displayDate(timedate_t td)
 {
     char date[] = "MMM DD";
     strncpy(date, monthNames[td.month - 1], 3); // Fill the month
@@ -58,9 +58,10 @@ void displayDate(timedate_t)
 
 void displayTemp(float temp, char unit)
 {
-    char out = "XXX.X X";
+    int tenths = (int)temp*10;
+    char* out = "XXX.X X";
     out[7] = unit;
-    numToCharBuf(temp / 10, out, 3); // Integer Part
-    numToCharBuf(temp % 10, out + 4, 1); // Decimal Part
+    numToCharBuf(tenths / 10, out, 3); // Integer Part
+    numToCharBuf(tenths % 10, out + 4, 1); // Decimal Part
     print_str(out, 48, 48, CLEAR);
 }
