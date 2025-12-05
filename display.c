@@ -41,37 +41,26 @@ void numToCharBuf(int num, char *buf, unsigned int buf_len)
 
 void displayTime(timedate_t td)
 {
-    char date[] = "MMM DD";
     char time[] = "HH:MM:SS";
-
-    strncpy(date, monthNames[td.month -1], 3); // Fill the month
-    numToCharBuf(td.day, date + 4, 2); // Fill the day
-
     numToCharBuf(td.hour, date, 2);
     numToCharBuf(td.minute, date + 3, 2);
     numToCharBuf(td.second, date + 6, 2);
-
-    print_str(date, 48, 48, NOCLEAR);
     print_str(time, 48, 32, CLEAR);
-
 }
 
-void displayTemp(float inAvgTempC)
+void displayDate(timedate_t)
 {
-    float avgTempF = 1.8 * inAvgTempC + 32;
+    char date[] = "MMM DD";
+    strncpy(date, monthNames[td.month - 1], 3); // Fill the month
+    numToCharBuf(td.day, date + 4, 2); // Fill the day
+    print_str(date, 48, 48, CLEAR);
+}
 
-    int tempC = (int) (inAvgTempC * 10); // Stored in tenths of a degree C
-    int tempF = (int) (avgTempF * 10); // Stored in tenths of a degree F
-
-    char temp[] = "XXX.X C, XXX.X F";
-    // Fill the integer part of C
-    numToCharBuf(tempC / 10, temp, 3);
-    // Fill the decimal part of C
-    numToCharBuf(tempC % 10, temp + 4, 1);
-    // Fill the integer part of F
-    numToCharBuf(tempF / 10, temp + 9, 3);
-    // FIll the decimal part of C
-    numToCharBuf(tempF % 10, temp + 13, 1);
-
-    print_str(temp, 48, 48, CLEAR);
+void displayTemp(float temp, char unit)
+{
+    char out = "XXX.X X";
+    out[7] = unit;
+    numToCharBuf(temp / 10, out, 3); // Integer Part
+    numToCharBuf(temp % 10, out + 4, 1); // Decimal Part
+    print_str(out, 48, 48, CLEAR);
 }
