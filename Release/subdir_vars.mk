@@ -10,50 +10,50 @@ CMD_SRCS += \
 
 C_SRCS += \
 ../buttons.c \
-../delay.c \
+../display.c \
 ../main.c \
-../note.c \
 ../peripherals.c \
+../sensor.c \
 ../timer.c 
 
 C_DEPS += \
 ./buttons.d \
-./delay.d \
+./display.d \
 ./main.d \
-./note.d \
 ./peripherals.d \
+./sensor.d \
 ./timer.d 
 
 OBJS += \
 ./buttons.obj \
-./delay.obj \
+./display.obj \
 ./main.obj \
-./note.obj \
 ./peripherals.obj \
+./sensor.obj \
 ./timer.obj 
 
 OBJS__QUOTED += \
 "buttons.obj" \
-"delay.obj" \
+"display.obj" \
 "main.obj" \
-"note.obj" \
 "peripherals.obj" \
+"sensor.obj" \
 "timer.obj" 
 
 C_DEPS__QUOTED += \
 "buttons.d" \
-"delay.d" \
+"display.d" \
 "main.d" \
-"note.d" \
 "peripherals.d" \
+"sensor.d" \
 "timer.d" 
 
 C_SRCS__QUOTED += \
 "../buttons.c" \
-"../delay.c" \
+"../display.c" \
 "../main.c" \
-"../note.c" \
 "../peripherals.c" \
+"../sensor.c" \
 "../timer.c" 
 
 

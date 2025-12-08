@@ -11,10 +11,10 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./buttons.obj" \
-"./delay.obj" \
+"./display.obj" \
 "./main.obj" \
-"./note.obj" \
 "./peripherals.obj" \
+"./sensor.obj" \
 "./timer.obj" \
 "./LcdDriver/HAL_MSP_EXP430FR5529_Sharp96x96.obj" \
 "./LcdDriver/Sharp96x96.obj" \
@@ -159,8 +159,8 @@ ECE2049.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "buttons.obj" "delay.obj" "main.obj" "note.obj" "peripherals.obj" "timer.obj" "LcdDriver\HAL_MSP_EXP430FR5529_Sharp96x96.obj" "LcdDriver\Sharp96x96.obj" "fonts\fontfixed6x8.obj" "images\LPRocket_96x37.obj" "images\TI_Logo_69x64.obj" 
-	-$(RM) "buttons.d" "delay.d" "main.d" "note.d" "peripherals.d" "timer.d" "LcdDriver\HAL_MSP_EXP430FR5529_Sharp96x96.d" "LcdDriver\Sharp96x96.d" "fonts\fontfixed6x8.d" "images\LPRocket_96x37.d" "images\TI_Logo_69x64.d" 
+	-$(RM) "buttons.obj" "display.obj" "main.obj" "peripherals.obj" "sensor.obj" "timer.obj" "LcdDriver\HAL_MSP_EXP430FR5529_Sharp96x96.obj" "LcdDriver\Sharp96x96.obj" "fonts\fontfixed6x8.obj" "images\LPRocket_96x37.obj" "images\TI_Logo_69x64.obj" 
+	-$(RM) "buttons.d" "display.d" "main.d" "peripherals.d" "sensor.d" "timer.d" "LcdDriver\HAL_MSP_EXP430FR5529_Sharp96x96.d" "LcdDriver\Sharp96x96.d" "fonts\fontfixed6x8.d" "images\LPRocket_96x37.d" "images\TI_Logo_69x64.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

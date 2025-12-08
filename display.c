@@ -20,8 +20,7 @@ void numToCharBuf(int num, char *buf, unsigned int buf_len)
     // Write the number to the buffer in reverse.
     for (int i = 0; i < buf_len; i++)
     {
-        buf[i] = num % 10;
-        i++;
+        buf[i] = (char) (num % 10 + '0');
         num /= 10;
     }
 
@@ -45,7 +44,7 @@ void displayTime(timedate_t td)
     numToCharBuf(td.hour, time, 2);
     numToCharBuf(td.minute, time + 3, 2);
     numToCharBuf(td.second, time + 6, 2);
-    print_str(time, 48, 32, CLEAR);
+    print_str(time, 48, 48, CLEAR);
 }
 
 void displayDate(timedate_t td)
@@ -58,9 +57,9 @@ void displayDate(timedate_t td)
 
 void displayTemp(float temp, char unit)
 {
-    int tenths = (int)temp*10;
-    char* out = "XXX.X X";
-    out[7] = unit;
+    int tenths = (int)(temp*10);
+    char out[] = "XXX.X X";
+    out[6] = unit;
     numToCharBuf(tenths / 10, out, 3); // Integer Part
     numToCharBuf(tenths % 10, out + 4, 1); // Decimal Part
     print_str(out, 48, 48, CLEAR);

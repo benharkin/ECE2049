@@ -61,22 +61,36 @@ void setTime(timedate_t time)
 
 timedate_t secondsToTimeDate(unsigned long seconds)
 {
-    unsigned char minutes = seconds / 60;
-    unsigned char hours = minutes / 60;
-    unsigned char days = hours / 24;
-    unsigned char months = days / 30;
-    timedate_t out = { months % 12, days % 30, hours % 24, minutes % 60, seconds
-                               % 60 };
-    return out;
+    timedate_t out;
 
+    out.second = seconds % 60;
+    seconds /= 60;
+
+    out.minute = seconds % 60;
+    seconds /= 60;
+
+    out.hour = seconds % 24;
+    seconds /= 24;
+
+    out.day = (seconds % 30) + 1;
+    seconds /= 30;
+
+    out.month = (seconds % 12) + 1;
+
+    return out;
 }
+
 
 unsigned long timeDateToSeconds(timedate_t td)
 {
-    unsigned long out = td.second;
-    out += td.minute * 60;
-    out += td.hour * 3600;
-    out += td.day * 86400;
-    out += td.month * 2592000;
-    return out;
+    unsigned long seconds = 0;
+
+    seconds += td.second;
+    seconds += td.minute * 60;
+    seconds += td.hour   * 3600;
+    seconds += (td.day - 1)   * 86400;
+    seconds += (td.month - 1) * (30 * 86400);
+
+    return seconds;
 }
+
