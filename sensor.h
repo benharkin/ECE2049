@@ -19,6 +19,6 @@ void updateTempAverage(unsigned long time);
 float get_Temp_AVG_C(void);
 float get_Temp_AVG_F(void);
 
-int get_Pot_Scaled(int min, int max);
+int get_pot_scaled(int min, int max);
 
 #endif /* SENSOR_H_ */

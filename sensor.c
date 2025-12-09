@@ -76,7 +76,7 @@ float get_Temp_AVG_F(void)
     return (get_Temp_AVG_C() * 9 / 5) + 32;
 }
 
-int get_Pot_Scaled(int min, int max)
+int get_pot_scaled(int min, int max)
 {
     return min + ((pot_reading * (max - min)) / 4095);
 }
