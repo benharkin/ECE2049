@@ -10,6 +10,11 @@ typedef enum
     EDIT, DATE, TIME, TEMP_C, TEMP_F, NONE
 } state_t;
 
+typedef enum
+{
+    MONTH, DAY, HOUR, MIN, SEC, NONE
+} edit_t;
+
 void main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;    // Stop watchdog timer
@@ -24,6 +29,8 @@ void main(void)
 
     state_t state = DATE;
     state_t prev_state = NONE;
+    edit_t edit_mode = MONTH;
+    edit_t prev_edit = NONE;
 
     char key;
     char prevKey = 0;
@@ -36,6 +43,7 @@ void main(void)
 
     unsigned long time;
     timedate_t timedate;
+    timedate_t temptimedate;
 
 
 
@@ -52,13 +60,16 @@ void main(void)
             updateTempAverage(time);
         }
 
-        // # key resets the game to IDLE
+        // # key switches between edit and not edit
         if (key != prevKey && key == '#')
         {
             if(state == EDIT)
                 state = DATE;
             else
+            {
                 state = EDIT;
+                temptimedate = timedate;
+            }
         }
 
         switch (state)
@@ -126,14 +137,44 @@ void main(void)
         }
         case EDIT:
         {
-//            if (state != prev_state)
-//            {
-//                clear_display();
-//                print_str("You Win!", 48, 48);
-//                show_print();
-//                //Display win and after 1 second go to idle
-//                prev_state = state;
-//            }
+            switch(edit_mode)
+            {
+            case MONTH:
+            {
+                // Get month and day
+                // Set temporary month to potentiometer
+                // Don't update display if potentiometer reads the same as previous?
+                // Displays the Month and Day (Highlight Month)
+                // Check left/right Button Pressed
+                    // If so, set new date and time to previous
+                    // date and time with updated month and temptimedate variable
+                    // Switch edit_mode to next/previous case
+
+            }
+
+            case DAY:
+            {
+                //
+            }
+
+            case HOUR:
+            {
+                //
+            }
+
+            case MIN:
+            {
+                //
+            }
+
+            case SEC:
+            {
+                //
+            }
+
+
+            }
+
             break;
         }
         }
