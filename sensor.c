@@ -76,10 +76,19 @@ float get_Temp_AVG_F(void)
     return (get_Temp_AVG_C() * 9 / 5) + 32;
 }
 
+//int get_pot_scaled(int min, int max)
+//{
+//    int pot = pot_reading;
+//    int result = min + ((pot_reading * (max - min)) / 4095);
+//    return result;
+//}
 int get_pot_scaled(int min, int max)
 {
-    return min + ((pot_reading * (max - min)) / 4095);
+    int result = min + ((long)pot_reading * (max - min)) / 4095;
+    return result;
 }
+
+
 
 #pragma vector=ADC12_VECTOR
 __interrupt void ADC12_ISR(void)

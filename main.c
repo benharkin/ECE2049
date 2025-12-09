@@ -49,10 +49,12 @@ void main(void)
 
     while (1)
     {
-
+        prevKey = key;
+        prev_time = time;
         key = getKey();
         time = getTime();
         timedate = secondsToTimeDate(time);
+
 
         if(time != prev_time)
         {
@@ -66,12 +68,13 @@ void main(void)
             if(state == EDIT)
             {
                 state = DATE;
-                setTime(edittimedate);
+                setTime(temptimedate);
             }
             else
             {
                 state = EDIT;
-                edittimedate = timedate;
+                //edittimedate = timedate;
+                temptimedate = timedate;
             }
         }
 
@@ -140,10 +143,10 @@ void main(void)
         }
         case EDIT:
         {
-            temptimedate = edittimedate;
+
             char newbutt = getButtons();
             char butt;
-            if(newbutt = prev_butt)
+            if(newbutt == prev_butt)
                 butt = 0;
             else
                 butt = newbutt;
@@ -175,6 +178,7 @@ void main(void)
                     edittimedate.month = temptimedate.month;
                     edit_mode = DAY;
                 }
+                break;
 
             }
 
@@ -201,6 +205,7 @@ void main(void)
                     edittimedate.day = temptimedate.day;
                     edit_mode = HOUR;
                 }
+                break;
             }
 
             case HOUR:
@@ -226,11 +231,12 @@ void main(void)
                     edittimedate.hour = temptimedate.hour;
                     edit_mode = MIN;
                 }
+                break;
             }
 
             case MIN:
             {
-                unsigned char pot = get_pot_scaled(1, 60);
+                unsigned char pot = get_pot_scaled(1, 59);
 
                 if(temptimedate.minute != pot)
                 {
@@ -251,6 +257,7 @@ void main(void)
                     edittimedate.minute = temptimedate.minute;
                     edit_mode = SEC;
                 }
+                break;
             }
 
             case SEC:
@@ -276,13 +283,13 @@ void main(void)
                     edittimedate.second = temptimedate.second;
                     edit_mode = MONTH;
                 }
+                break;
             }
             }
             break;
         }
         }
-        prevKey = key;
-        prev_time = time;
+
     }
 
 
