@@ -21,5 +21,4 @@ float get_Temp_AVG_F(void);
 
 int get_Pot_Scaled(int min, int max);
 
-
 #endif /* SENSOR_H_ */
