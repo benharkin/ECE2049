@@ -7,12 +7,12 @@
 
 typedef enum
 {
-    EDIT, DATE, TIME, TEMP_C, TEMP_F, NONE
+    EDIT, DATE, TIME, TEMP_C, TEMP_F
 } state_t;
 
 typedef enum
 {
-    MONTH, DAY, HOUR, MIN, SEC, NONE
+    MONTH, DAY, HOUR, MIN, SEC
 } edit_t;
 
 void main(void)
@@ -28,12 +28,11 @@ void main(void)
     initButtons();
 
     state_t state = DATE;
-    state_t prev_state = NONE;
     edit_t edit_mode = MONTH;
-    edit_t prev_edit = NONE;
 
     char key;
     char prevKey = 0;
+    char prev_butt = 0;
     short int count = 0;
     unsigned long prev_time = 0;
 
@@ -43,6 +42,7 @@ void main(void)
 
     unsigned long time;
     timedate_t timedate;
+    timedate_t edittimedate;
     timedate_t temptimedate;
 
 
@@ -64,11 +64,14 @@ void main(void)
         if (key != prevKey && key == '#')
         {
             if(state == EDIT)
+            {
                 state = DATE;
+                setTime(edittimedate);
+            }
             else
             {
                 state = EDIT;
-                temptimedate = timedate;
+                edittimedate = timedate;
             }
         }
 
@@ -137,44 +140,144 @@ void main(void)
         }
         case EDIT:
         {
+            temptimedate = edittimedate;
+            char newbutt = getButtons();
+            char butt;
+            if(newbutt = prev_butt)
+                butt = 0;
+            else
+                butt = newbutt;
+            prev_butt = newbutt;
+
             switch(edit_mode)
             {
             case MONTH:
             {
-                // Get month and day
-                // Set temporary month to potentiometer
-                // Don't update display if potentiometer reads the same as previous?
-                // Displays the Month and Day (Highlight Month)
-                // Check left/right Button Pressed
-                    // If so, set new date and time to previous
-                    // date and time with updated month and temptimedate variable
-                    // Switch edit_mode to next/previous case
+                // Set temporary month to potentiometer if new month read
+                unsigned char pot = get_pot_scaled(1, 12);
+
+                if(temptimedate.month != pot)
+                {
+                    temptimedate.month = pot;
+                    displayDate(temptimedate); // Highlight Month
+                }
+
+                if(butt == BIT0)
+                {
+                    // Left Button Pressed
+                    edittimedate.month = temptimedate.month;
+                    edit_mode = SEC;
+                }
+
+                if(butt == BIT1)
+                {
+                    // Right Button Pressed
+                    edittimedate.month = temptimedate.month;
+                    edit_mode = DAY;
+                }
 
             }
 
             case DAY:
             {
-                //
+                unsigned char pot = get_pot_scaled(1, 31);
+
+                if(temptimedate.day != pot)
+                {
+                    temptimedate.day = pot;
+                    displayDate(temptimedate); // Highlight Day
+                }
+
+                if(butt == BIT0)
+                {
+                    // Left Button Pressed
+                    edittimedate.day = temptimedate.day;
+                    edit_mode = MONTH;
+                }
+
+                if(butt == BIT1)
+                {
+                    // Right Button Pressed
+                    edittimedate.day = temptimedate.day;
+                    edit_mode = HOUR;
+                }
             }
 
             case HOUR:
             {
-                //
+                unsigned char pot = get_pot_scaled(1, 24);
+
+                if(temptimedate.hour != pot)
+                {
+                    temptimedate.hour = pot;
+                    displayTime(temptimedate); // Highlight Hour
+                }
+
+                if(butt == BIT0)
+                {
+                    // Left Button Pressed
+                    edittimedate.hour = temptimedate.hour;
+                    edit_mode = DAY;
+                }
+
+                if(butt == BIT1)
+                {
+                    // Right Button Pressed
+                    edittimedate.hour = temptimedate.hour;
+                    edit_mode = MIN;
+                }
             }
 
             case MIN:
             {
-                //
+                unsigned char pot = get_pot_scaled(1, 60);
+
+                if(temptimedate.minute != pot)
+                {
+                    temptimedate.minute = pot;
+                    displayTime(temptimedate); // Highlight Min
+                }
+
+                if(butt == BIT0)
+                {
+                    // Left Button Pressed
+                    edittimedate.minute = temptimedate.minute;
+                    edit_mode = HOUR;
+                }
+
+                if(butt == BIT1)
+                {
+                    // Right Button Pressed
+                    edittimedate.minute = temptimedate.minute;
+                    edit_mode = SEC;
+                }
             }
 
             case SEC:
             {
-                //
+                unsigned char pot = get_pot_scaled(1, 60);
+
+                if(temptimedate.second != pot)
+                {
+                    temptimedate.second = pot;
+                    displayTime(temptimedate); // Highlight Second
+                }
+
+                if(butt == BIT0)
+                {
+                    // Left Button Pressed
+                    edittimedate.second = temptimedate.second;
+                    edit_mode = MIN;
+                }
+
+                if(butt == BIT1)
+                {
+                    // Right Button Pressed
+                    edittimedate.second = temptimedate.second;
+                    edit_mode = MONTH;
+                }
             }
-
-
             }
-
             break;
         }
         }
