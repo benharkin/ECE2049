@@ -13,7 +13,7 @@ typedef enum
 void main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;    // Stop watchdog timer
-    _BIS_SR(GIE); // Global interupts enable
+    _BIS_SR(GIE); // Global interrupts enable
     setupTimer();
     setupADC();
 
@@ -23,7 +23,7 @@ void main(void)
     initButtons();
 
     state_t state = DATE;
-    edit_t edit_mode = MONTH;
+    edit_t edit_mode = NONE;
 
     char key;
     char prevKey = 0;
@@ -69,6 +69,7 @@ void main(void)
             else
             {
                 state = EDIT;
+                edit_mode = MONTH;
                 //edittimedate = timedate;
                 temptimedate = timedate;
             }
