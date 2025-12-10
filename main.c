@@ -10,11 +10,6 @@ typedef enum
     EDIT, DATE, TIME, TEMP_C, TEMP_F
 } state_t;
 
-typedef enum
-{
-    MONTH, DAY, HOUR, MIN, SEC
-} edit_t;
-
 void main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;    // Stop watchdog timer
@@ -68,6 +63,7 @@ void main(void)
             if(state == EDIT)
             {
                 state = DATE;
+                edit_mode = NONE;
                 setTime(temptimedate);
             }
             else
@@ -85,7 +81,7 @@ void main(void)
             //Display the date each second for 3 seconds
             if (time%3 == count)
             {
-                displayDate(timedate);
+                displayDate(timedate, edit_mode);
                 count++;
             }
             if(count == 3)
@@ -100,7 +96,7 @@ void main(void)
             //Display the time each second for 3 seconds
             if (time%3 == count)
             {
-                displayTime(timedate);
+                displayTime(timedate, edit_mode);
                 count++;
             }
             if(count == 3)
@@ -162,7 +158,7 @@ void main(void)
                 if(temptimedate.month != pot)
                 {
                     temptimedate.month = pot;
-                    displayDate(temptimedate); // Highlight Month
+                    displayDate(temptimedate, edit_mode); // Highlight Month
                 }
 
                 if(butt == BIT0)
@@ -189,7 +185,7 @@ void main(void)
                 if(temptimedate.day != pot)
                 {
                     temptimedate.day = pot;
-                    displayDate(temptimedate); // Highlight Day
+                    displayDate(temptimedate, edit_mode); // Highlight Day
                 }
 
                 if(butt == BIT0)
@@ -215,7 +211,7 @@ void main(void)
                 if(temptimedate.hour != pot)
                 {
                     temptimedate.hour = pot;
-                    displayTime(temptimedate); // Highlight Hour
+                    displayTime(temptimedate, edit_mode); // Highlight Hour
                 }
 
                 if(butt == BIT0)
@@ -241,7 +237,7 @@ void main(void)
                 if(temptimedate.minute != pot)
                 {
                     temptimedate.minute = pot;
-                    displayTime(temptimedate); // Highlight Min
+                    displayTime(temptimedate, edit_mode); // Highlight Min
                 }
 
                 if(butt == BIT0)
@@ -267,7 +263,7 @@ void main(void)
                 if(temptimedate.second != pot)
                 {
                     temptimedate.second = pot;
-                    displayTime(temptimedate); // Highlight Second
+                    displayTime(temptimedate, edit_mode); // Highlight Second
                 }
 
                 if(butt == BIT0)
